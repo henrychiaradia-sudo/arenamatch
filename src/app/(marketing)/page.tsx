@@ -7,24 +7,32 @@ import {
   Search,
   Handshake,
   Sparkles,
+  Instagram,
+  MapPin,
+  BadgeCheck,
+  Mail,
+  MessageSquare,
+  Phone,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { SectionHeading } from '@/components/ui/section-heading';
-import { MatchScore } from '@/components/ui/match-score';
 import { appConfig } from '@/config/app';
 import { formatCurrency, formatPercent } from '@/lib/format';
-import { getInitials } from '@/lib/utils';
+import { HeroVideo } from '@/features/marketing/hero-video';
+import { BrandStrip } from '@/features/marketing/brand-strip';
+import { ContactForm } from '@/features/marketing/contact-form';
+import { NewsletterForm } from '@/features/marketing/newsletter-form';
+import { HERO_VIDEO, HERO_POSTER, ATHLETE_PHOTOS } from '@/features/marketing/assets';
 
 // ---- Dados demonstrativos (fictícios) ------------------------------------
 const demoAthletes = [
-  { name: 'Marina Costa', sport: 'Surfe', city: 'Florianópolis/SC', need: 4500000, match: 92 },
-  { name: 'Rafael Nunes', sport: 'Paratletismo', city: 'Curitiba/PR', need: 3200000, match: 88 },
-  { name: 'Bianca Alves', sport: 'Ginástica', city: 'São Paulo/SP', need: 2800000, match: 84 },
-  { name: 'Diego Martins', sport: 'Ciclismo', city: 'Belo Horizonte/MG', need: 5200000, match: 81 },
+  { name: 'Marina Costa', sport: 'Surfe', city: 'Florianópolis/SC', need: 4500000, match: 92, followers: '125k', photo: ATHLETE_PHOTOS[0] },
+  { name: 'Camila Rocha', sport: 'Natação', city: 'Rio de Janeiro/RJ', need: 6000000, match: 88, followers: '180k', photo: ATHLETE_PHOTOS[1] },
+  { name: 'Bianca Alves', sport: 'Ginástica', city: 'São Paulo/SP', need: 2800000, match: 84, followers: '210k', photo: ATHLETE_PHOTOS[2] },
+  { name: 'Ana Beatriz', sport: 'Atletismo', city: 'São Paulo/SP', need: 5800000, match: 81, followers: '95k', photo: ATHLETE_PHOTOS[3] },
 ];
 
 const demoProjects = [
@@ -82,21 +90,6 @@ const demoStats = [
   { label: 'Conexões realizadas', value: '3.400+' },
 ];
 
-const demoTestimonials = [
-  {
-    quote:
-      'Encontramos dois atletas alinhados à nossa marca em menos de uma semana. O match economizou muito tempo.',
-    author: 'Personagem Fictícia',
-    role: 'Gerente de Marketing (demonstração)',
-  },
-  {
-    quote:
-      'Consegui organizar minhas contrapartidas e finalmente ter um perfil profissional para apresentar a patrocinadores.',
-    author: 'Atleta Fictício',
-    role: 'Atleta de base (demonstração)',
-  },
-];
-
 const faqs = [
   {
     q: 'O que é patrocínio direto e patrocínio incentivado?',
@@ -119,17 +112,20 @@ const faqs = [
 export default function HomePage() {
   return (
     <>
-      {/* HERO */}
-      <section className="bg-hero-grid">
-        <div className="container flex flex-col items-center gap-6 py-20 text-center md:py-28">
-          <Badge variant="secondary" className="gap-1.5 py-1">
+      {/* HERO com vídeo */}
+      <section className="relative isolate overflow-hidden bg-neutral-950 text-white">
+        <HeroVideo src={HERO_VIDEO} poster={HERO_POSTER} />
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/75 to-neutral-950/50" />
+        <div className="absolute inset-0 bg-neutral-950/30" />
+        <div className="container relative z-10 flex min-h-[82vh] flex-col justify-center gap-6 py-24">
+          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium backdrop-blur">
             <span className="inline-block h-2 w-2 rounded-full bg-success" />
             Marketplace · Rede · CRM de patrocínio esportivo
-          </Badge>
-          <h1 className="max-w-4xl font-display text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+          </span>
+          <h1 className="max-w-3xl font-display text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
             {appConfig.tagline}
           </h1>
-          <p className="max-w-2xl text-lg text-muted-foreground">
+          <p className="max-w-xl text-lg text-white/80">
             O {appConfig.name} conecta atletas de alto rendimento, projetos esportivos e empresas —
             em patrocínio direto ou incentivado. Descubra, conecte, negocie e gerencie em um só lugar.
           </p>
@@ -139,43 +135,76 @@ export default function HomePage() {
                 Começar agora <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline">
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-white/40 bg-white/5 text-white hover:bg-white hover:text-neutral-900"
+            >
               <Link href="/como-funciona">Como funciona</Link>
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-white/60">
             Ambiente demonstrativo (MVP). Nenhum dado abaixo representa usuários reais.
           </p>
         </div>
       </section>
 
-      {/* AUDIÊNCIAS */}
+      {/* MARCAS QUE APOIAM */}
+      <BrandStrip />
+
+      {/* ATLETAS EM DESTAQUE (com fotos) */}
       <section className="container py-16 md:py-24">
-        <SectionHeading
-          eyebrow="Um produto, três públicos"
-          title="Feito para quem move o esporte"
-          description="Atletas, empresas e gestores de projeto em uma plataforma pensada para gerar conexões reais."
-        />
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {audiences.map((a) => (
-            <Card key={a.title} className="transition-shadow hover:shadow-md">
-              <CardHeader>
-                <div className="mb-2 grid h-11 w-11 place-items-center rounded-lg bg-primary/10 text-primary">
-                  <a.icon className="h-5 w-5" />
+        <div className="flex items-end justify-between gap-4">
+          <SectionHeading
+            align="left"
+            eyebrow="Descubra nossos atletas"
+            title="Atletas em destaque"
+            description="Uma seleção de atletas de diversas modalidades e regiões (demonstração)."
+          />
+          <Button asChild variant="outline" className="hidden shrink-0 sm:inline-flex">
+            <Link href="/explorar/atletas">Ver todos</Link>
+          </Button>
+        </div>
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {demoAthletes.map((a) => (
+            <Card key={a.name} className="group overflow-hidden">
+              <div className="relative aspect-[4/5] overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={a.photo}
+                  alt={`${a.name} — ${a.sport}`}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-4">
+                  <div className="flex items-center gap-1.5">
+                    <p className="font-semibold text-white">{a.name}</p>
+                    <BadgeCheck className="h-4 w-4 text-sky-400" />
+                  </div>
+                  <p className="flex items-center gap-1 text-sm text-white/80">
+                    <MapPin className="h-3.5 w-3.5" /> {a.sport} · {a.city}
+                  </p>
                 </div>
-                <CardTitle>{a.title}</CardTitle>
-                <CardDescription>{a.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Link
-                  href={a.href}
-                  className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                >
-                  Saiba mais <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
+                <Badge className="absolute right-3 top-3 bg-primary/90">{a.match}% match</Badge>
+              </div>
+              <CardContent className="flex items-center justify-between p-4">
+                <span className="flex items-center gap-1.5 text-sm font-medium">
+                  <Instagram className="h-4 w-4 text-muted-foreground" /> {a.followers}
+                </span>
+                <span className="text-right text-xs text-muted-foreground">
+                  Necessidade
+                  <br />
+                  <span className="font-medium text-foreground">{formatCurrency(a.need)}</span>
+                </span>
               </CardContent>
             </Card>
           ))}
+        </div>
+        <div className="mt-8 text-center sm:hidden">
+          <Button asChild variant="outline">
+            <Link href="/explorar/atletas">Ver todos os atletas</Link>
+          </Button>
         </div>
       </section>
 
@@ -204,36 +233,30 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ATLETAS EM DESTAQUE */}
+      {/* AUDIÊNCIAS */}
       <section className="container py-16 md:py-24">
-        <div className="flex items-end justify-between gap-4">
-          <SectionHeading
-            align="left"
-            eyebrow="Descoberta"
-            title="Atletas em destaque"
-            description="Exemplos demonstrativos de como os atletas aparecem na busca."
-          />
-          <Button asChild variant="outline" className="hidden shrink-0 sm:inline-flex">
-            <Link href="/explorar/atletas">Ver todos</Link>
-          </Button>
-        </div>
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {demoAthletes.map((a) => (
-            <Card key={a.name} className="overflow-hidden">
-              <div className="h-20 bg-gradient-to-br from-primary/20 to-success/20" />
-              <CardContent className="-mt-10 flex flex-col items-center text-center">
-                <Avatar className="h-16 w-16 border-4 border-background">
-                  <AvatarFallback>{getInitials(a.name)}</AvatarFallback>
-                </Avatar>
-                <h3 className="mt-3 font-semibold">{a.name}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {a.sport} · {a.city}
-                </p>
-                <div className="mt-3">
-                  <MatchScore score={a.match} />
+        <SectionHeading
+          eyebrow="Um produto, três públicos"
+          title="Feito para quem move o esporte"
+          description="Atletas, empresas e gestores de projeto em uma plataforma pensada para gerar conexões reais."
+        />
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {audiences.map((a) => (
+            <Card key={a.title} className="transition-shadow hover:shadow-md">
+              <CardHeader>
+                <div className="mb-2 grid h-11 w-11 place-items-center rounded-lg bg-primary/10 text-primary">
+                  <a.icon className="h-5 w-5" />
                 </div>
-                <p className="mt-3 text-xs text-muted-foreground">Necessidade estimada</p>
-                <p className="text-sm font-medium">{formatCurrency(a.need)}</p>
+                <CardTitle>{a.title}</CardTitle>
+                <CardDescription>{a.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link
+                  href={a.href}
+                  className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                >
+                  Saiba mais <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
               </CardContent>
             </Card>
           ))}
@@ -276,7 +299,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* INDICADORES DEMONSTRATIVOS */}
+      {/* INDICADORES */}
       <section className="container py-16 md:py-24">
         <div className="rounded-2xl border bg-primary/5 p-8 md:p-12">
           <p className="text-center text-sm font-medium uppercase tracking-wide text-primary">
@@ -293,51 +316,72 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* DEPOIMENTOS */}
-      <section className="border-t bg-muted/30">
-        <div className="container py-16 md:py-24">
-          <SectionHeading
-            eyebrow="Depoimentos"
-            title="Histórias (fictícias) de conexão"
-            description="Exemplos ilustrativos — claramente marcados como demonstração."
-          />
-          <div className="mx-auto mt-12 grid max-w-4xl gap-6 md:grid-cols-2">
-            {demoTestimonials.map((t) => (
-              <Card key={t.author}>
-                <CardContent className="p-6">
-                  <p className="text-lg">“{t.quote}”</p>
-                  <div className="mt-4 flex items-center gap-3">
-                    <Avatar>
-                      <AvatarFallback>{getInitials(t.author)}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm font-semibold">{t.author}</p>
-                      <p className="text-xs text-muted-foreground">{t.role}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+      {/* CONTATO */}
+      <section id="contato" className="border-t bg-muted/30">
+        <div className="container grid gap-10 py-16 md:grid-cols-2 md:py-24">
+          <div>
+            <SectionHeading
+              align="left"
+              eyebrow="Fale com a gente"
+              title="Entre em contato"
+              description="Dúvidas, parcerias ou imprensa? Envie uma mensagem — respondemos por e-mail."
+            />
+            <div className="mt-8 space-y-4 text-sm">
+              <p className="flex items-center gap-3">
+                <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">
+                  <Mail className="h-5 w-5" />
+                </span>
+                <span>
+                  E-mail
+                  <br />
+                  <span className="font-medium text-foreground">{appConfig.contactEmail}</span>
+                </span>
+              </p>
+              <p className="flex items-center gap-3">
+                <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">
+                  <MessageSquare className="h-5 w-5" />
+                </span>
+                <span>
+                  Suporte
+                  <br />
+                  <span className="font-medium text-foreground">Resposta em até 2 dias úteis</span>
+                </span>
+              </p>
+              <p className="flex items-center gap-3">
+                <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">
+                  <Phone className="h-5 w-5" />
+                </span>
+                <span>
+                  Atendimento
+                  <br />
+                  <span className="font-medium text-foreground">Seg. a sex., 9h às 18h</span>
+                </span>
+              </p>
+            </div>
           </div>
+          <Card>
+            <CardContent className="p-6">
+              <ContactForm />
+            </CardContent>
+          </Card>
         </div>
       </section>
 
-      {/* CTA FINAL */}
-      <section className="container py-16 md:py-24">
-        <div className="relative overflow-hidden rounded-2xl bg-primary px-6 py-14 text-center text-primary-foreground md:px-12">
-          <div className="relative z-10 mx-auto max-w-2xl space-y-5">
-            <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-              Pronto para transformar o esporte?
-            </h2>
-            <p className="text-lg text-primary-foreground/80">
-              Crie seu perfil gratuito e comece a construir conexões de patrocínio hoje.
-            </p>
-            <Button asChild size="lg" variant="secondary">
-              <Link href="/cadastro">
-                Criar conta gratuita <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
+      {/* NEWSLETTER */}
+      <section className="bg-primary text-primary-foreground">
+        <div className="container flex flex-col items-center gap-6 py-14 text-center md:py-16">
+          <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
+            Receba novidades do {appConfig.name}
+          </h2>
+          <p className="max-w-xl text-primary-foreground/80">
+            Oportunidades, histórias do esporte e novidades da plataforma direto no seu e-mail.
+          </p>
+          <div className="flex justify-center">
+            <NewsletterForm tone="dark" />
           </div>
+          <p className="text-xs text-primary-foreground/70">
+            Sem spam. Você pode cancelar quando quiser.
+          </p>
         </div>
       </section>
 

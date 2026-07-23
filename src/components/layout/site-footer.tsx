@@ -1,7 +1,16 @@
 import Link from 'next/link';
+import { Instagram, Linkedin, Youtube, Facebook, Twitter } from 'lucide-react';
 import { Logo } from '@/components/brand/logo';
 import { appConfig } from '@/config/app';
 import { FOOTER_NAV } from '@/config/nav';
+
+const socials = [
+  { label: 'Instagram', href: '#', icon: Instagram },
+  { label: 'LinkedIn', href: '#', icon: Linkedin },
+  { label: 'YouTube', href: '#', icon: Youtube },
+  { label: 'Facebook', href: '#', icon: Facebook },
+  { label: 'X (Twitter)', href: '#', icon: Twitter },
+];
 
 export function SiteFooter() {
   return (
@@ -11,6 +20,19 @@ export function SiteFooter() {
           <div className="max-w-xs">
             <Logo />
             <p className="mt-4 text-sm text-muted-foreground">{appConfig.tagline}</p>
+            {/* Redes sociais (somente ícones por enquanto) */}
+            <div className="mt-5 flex items-center gap-2">
+              {socials.map((s) => (
+                <Link
+                  key={s.label}
+                  href={s.href}
+                  aria-label={s.label}
+                  className="grid h-9 w-9 place-items-center rounded-full border text-muted-foreground transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground"
+                >
+                  <s.icon className="h-4 w-4" />
+                </Link>
+              ))}
+            </div>
           </div>
 
           {FOOTER_NAV.map((col) => (

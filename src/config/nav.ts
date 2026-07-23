@@ -19,6 +19,7 @@ import {
   Flag,
   CreditCard,
   Trophy,
+  Mail,
 } from 'lucide-react';
 import type { UserRole } from '@/types/enums';
 
@@ -112,6 +113,7 @@ export const APP_NAV: Record<UserRole, NavItem[]> = {
     { title: 'Projetos', href: '/admin/projetos', icon: FolderKanban },
     { title: 'Oportunidades', href: '/admin/oportunidades', icon: Megaphone },
     { title: 'Denúncias', href: '/admin/denuncias', icon: Flag },
+    { title: 'Contato & Newsletter', href: '/admin/contato', icon: Mail },
     { title: 'Planos', href: '/admin/planos', icon: CreditCard },
     { title: 'Auditoria', href: '/admin/auditoria', icon: FileCheck2 },
     { title: 'Configurações', href: '/admin/configuracoes', icon: Settings },

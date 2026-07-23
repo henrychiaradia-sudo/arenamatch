@@ -71,8 +71,8 @@ begin
     where profile_id = v_id;
 
     update public.profiles set
-      verification_status = case when rec.followers > 100000 then 'verified' else 'not_started' end,
-      plan_tier = case when rec.followers > 100000 then 'athlete_premium' else 'athlete_free' end,
+      verification_status = (case when rec.followers > 100000 then 'verified' else 'not_started' end)::verification_status,
+      plan_tier = (case when rec.followers > 100000 then 'athlete_premium' else 'athlete_free' end)::plan_tier,
       onboarding_completed = true,
       headline = 'Atleta de ' || rec.sport
     where id = v_id;
@@ -184,7 +184,7 @@ begin
       rec.state, rec.city,
       'Municipal', 'Crianças e jovens', 'Democratizar o acesso ao esporte', '12 meses',
       rec.total, rec.raised, rec.model::funding_model, rec.status::project_status, rec.impact,
-      case when rec.status in ('draft') then 'not_started' else 'verified' end
+      (case when rec.status in ('draft') then 'not_started' else 'verified' end)::verification_status
     );
     i := i + 1;
   end loop;
