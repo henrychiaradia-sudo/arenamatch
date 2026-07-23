@@ -297,5 +297,106 @@ begin
 end;
 $$;
 
+-- ==================== PERFORMANCE DO PATROCÍNIO ==========================
+-- Contrapartidas realistas + parâmetros, para o módulo de Performance ter dados.
+do $$
+declare
+  d record; i int; n int;
+  titles text[] := array['Post no feed','Stories da parceria','Reel de bastidores','Aparição em evento','Marca no uniforme','Conteúdo exclusivo','Menção em entrevista','Clínica esportiva'];
+begin
+  for d in select id, row_number() over (order by created_at) as rn from public.deals loop
+    n := 4 + (d.rn::int % 3);
+    for i in 1..n loop
+      insert into public.deliverables (deal_id, title, status, due_date)
+      values (
+        d.id,
+        titles[1 + ((i - 1) % array_length(titles, 1))] || ' #' || i,
+        (case when i <= n - 1 then 'completed' else 'planned' end)::deliverable_status,
+        (now() + (i || ' days')::interval)::date
+      );
+    end loop;
+  end loop;
+end $$;
+
+with ranked as (
+  select id, row_number() over (order by created_at) as rn from public.deals
+)
+insert into public.sponsorship_performance (deal_id, cpm_cents, other_value_cents)
+select id, 2200, (150000 + (rn % 4) * 500000)::bigint
+from ranked
+where rn % 2 = 0
+on conflict (deal_id) do nothing;
+
+-- Fase 2: mídia espontânea, pesquisa de marca e leads (demonstração)
+do $$
+declare
+  d record; i int;
+  outlets text[] := array['portal','tv','revista','influenciador','podcast','radio','jornal','blog'];
+  names text[] := array['Globo Esporte','UOL Esporte','ESPN Brasil','GE.globo','Lance!','CazéTV','Podcast Esporte','Blog do Torcedor'];
+  sents text[] := array['positive','positive','neutral','positive','negative','neutral'];
+begin
+  for d in select id, row_number() over (order by created_at) as rn from public.deals loop
+    for i in 1..(3 + (d.rn::int % 4)) loop
+      insert into public.media_clippings (deal_id, outlet_type, outlet_name, title, reach, ave_cents, sentiment, published_at)
+      values (
+        d.id,
+        outlets[1 + ((i + d.rn::int) % array_length(outlets,1))],
+        names[1 + ((i + d.rn::int) % array_length(names,1))],
+        'Cobertura da parceria #' || i,
+        (50000 + ((i * d.rn::int) % 12) * 90000)::bigint,
+        (200000 + ((i * d.rn::int) % 12) * 500000)::bigint,
+        sents[1 + ((i + d.rn::int) % array_length(sents,1))],
+        (now() - (i || ' days')::interval)::date
+      );
+    end loop;
+    insert into public.brand_surveys (deal_id, metric, before_value, after_value, unit) values
+      (d.id, 'recall_espontaneo', 18 + (d.rn::int % 5), 26 + (d.rn::int % 8), '%'),
+      (d.id, 'top_of_mind', 9 + (d.rn::int % 4), 14 + (d.rn::int % 6), '%'),
+      (d.id, 'intencao_compra', 22 + (d.rn::int % 6), 29 + (d.rn::int % 7), '%'),
+      (d.id, 'nps', 40 + (d.rn::int % 10), 52 + (d.rn::int % 12), 'pts');
+    insert into public.sponsorship_leads (deal_id, source, captured, converted) values
+      (d.id, 'landing_page', 800 + (d.rn::int % 5)*300, 60 + (d.rn::int % 5)*20),
+      (d.id, 'qr_code', 400 + (d.rn::int % 4)*150, 30 + (d.rn::int % 4)*10),
+      (d.id, 'cupom', 250 + (d.rn::int % 3)*120, 45 + (d.rn::int % 3)*15),
+      (d.id, 'cadastro', 600 + (d.rn::int % 6)*100, 50 + (d.rn::int % 6)*12);
+  end loop;
+end $$;
+
+-- Nível B: TV, público, hospitalidade, licenciamento, merchandising (demonstração)
+do $$
+declare
+  d record; i int;
+  tvtypes text[] := array['logo','uniforme','placas','led','backdrop','entrevista'];
+begin
+  for d in select id, row_number() over (order by created_at) as rn from public.deals loop
+    for i in 1..(2 + (d.rn::int % 3)) loop
+      insert into public.tv_exposures (deal_id, program, exposure_type, seconds, insertions, audience, ave_cents)
+      values (d.id, (array['Jornal Nacional','Globo Esporte','Domingão','Fantástico','SporTV'])[1+((i+d.rn::int)%5)],
+        tvtypes[1+((i+d.rn::int)%array_length(tvtypes,1))],
+        (30 + (i*d.rn::int)%180), (1 + (i%4)), (1000000 + ((i*d.rn::int)%20)*400000)::bigint,
+        (500000 + ((i*d.rn::int)%10)*900000)::bigint);
+    end loop;
+    insert into public.audience_segments (deal_id, dimension, label, pct) values
+      (d.id,'genero','Masculino', 52 + (d.rn::int%8)), (d.id,'genero','Feminino', 48 - (d.rn::int%8)),
+      (d.id,'faixa_etaria','18–24', 22 + (d.rn::int%6)), (d.id,'faixa_etaria','25–34', 34), (d.id,'faixa_etaria','35–44', 24), (d.id,'faixa_etaria','45+', 20),
+      (d.id,'classe','A', 18), (d.id,'classe','B', 46), (d.id,'classe','C', 36),
+      (d.id,'regiao','Sudeste', 44), (d.id,'regiao','Sul', 18), (d.id,'regiao','Nordeste', 22), (d.id,'regiao','Outras', 16);
+    insert into public.hospitality_events (deal_id, event_name, guests, clients, executives, deals_started, deals_closed, satisfaction)
+    values (d.id, 'Camarote da temporada', 40 + (d.rn::int%5)*20, 18 + (d.rn::int%4)*5, 6 + (d.rn::int%3), 9 + (d.rn::int%5), 3 + (d.rn::int%4), 8.2 + (d.rn::int%8)*0.1);
+    for i in 1..(2 + (d.rn::int % 3)) loop
+      insert into public.licensing_records (deal_id, product, region, units_sold, revenue_cents, royalties_cents)
+      values (d.id, (array['Camisa oficial','Boné','Caneca','Chaveiro','Mochila'])[1+((i+d.rn::int)%5)],
+        (array['Sudeste','Sul','Nordeste','Nacional'])[1+((i+d.rn::int)%4)],
+        (500 + ((i*d.rn::int)%20)*200), (5000000 + ((i*d.rn::int)%15)*3000000)::bigint, (500000 + ((i*d.rn::int)%15)*300000)::bigint);
+    end loop;
+    for i in 1..(2 + (d.rn::int % 4)) loop
+      insert into public.merchandising_points (deal_id, pdv_name, region, material_type, points)
+      values (d.id, (array['Rede Extra','Assaí','Pão de Açúcar','Carrefour','Mercado Local'])[1+((i+d.rn::int)%5)],
+        (array['Sudeste','Sul','Nordeste','Centro-Oeste'])[1+((i+d.rn::int)%4)],
+        (array['display','ilha','encarte','pdv','banner'])[1+((i+d.rn::int)%5)], (1 + (i%6)));
+    end loop;
+  end loop;
+end $$;
+
 -- Remove a função utilitária de seed.
 drop function if exists public._seed_user(text, text, text);

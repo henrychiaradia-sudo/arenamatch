@@ -20,6 +20,7 @@ import {
   CreditCard,
   Trophy,
   Mail,
+  Gauge,
 } from 'lucide-react';
 import type { UserRole } from '@/types/enums';
 
@@ -92,6 +93,7 @@ export const APP_NAV: Record<UserRole, NavItem[]> = {
     { title: 'Buscar projetos', href: '/explorar/projetos', icon: FolderKanban },
     { title: 'Minhas oportunidades', href: '/painel/oportunidades', icon: Megaphone },
     { title: 'Pipeline', href: '/painel/pipeline', icon: BarChart3 },
+    { title: 'Performance', href: '/painel/performance', icon: Gauge },
     { title: 'Conexões', href: '/painel/conexoes', icon: Handshake },
     { title: 'Mensagens', href: '/painel/mensagens', icon: MessagesSquare },
     { title: 'Contrapartidas', href: '/painel/contrapartidas', icon: ClipboardCheck },

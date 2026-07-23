@@ -16,7 +16,7 @@ import {
   Info,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { SectionHeading } from '@/components/ui/section-heading';
 import { appConfig } from '@/config/app';
