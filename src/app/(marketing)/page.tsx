@@ -13,6 +13,8 @@ import {
   Mail,
   MessageSquare,
   Phone,
+  Landmark,
+  Percent,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -152,6 +154,51 @@ export default function HomePage() {
 
       {/* MARCAS QUE APOIAM */}
       <BrandStrip />
+
+      {/* LEI DE INCENTIVO AO ESPORTE — selo + como trabalhamos */}
+      <section className="container py-16 md:py-24">
+        <div className="overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/5 to-success/5">
+          <div className="grid items-center gap-8 p-8 md:grid-cols-[auto_1fr] md:gap-12 md:p-12">
+            {/* Selo da Lei */}
+            <div className="mx-auto flex w-full max-w-[240px] flex-col items-center gap-3 rounded-xl border bg-background p-6 text-center shadow-sm">
+              <div className="grid h-16 w-16 place-items-center rounded-full bg-primary/10 text-primary">
+                <Landmark className="h-8 w-8" />
+              </div>
+              <p className="font-display text-lg font-bold leading-tight">
+                Lei de Incentivo
+                <br />
+                ao Esporte
+              </p>
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                <Percent className="h-3 w-3" /> Patrocínio incentivado
+              </span>
+              <p className="text-xs text-muted-foreground">
+                Lei 11.438/2006 · permanente (LC 222/2025)
+              </p>
+            </div>
+            {/* Texto */}
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wide text-primary">
+                Patrocínio incentivado
+              </p>
+              <h2 className="mt-2 font-display text-2xl font-bold tracking-tight sm:text-3xl">
+                Trabalhamos com a Lei de Incentivo ao Esporte
+              </h2>
+              <p className="mt-3 max-w-2xl text-muted-foreground">
+                Empresas e pessoas físicas podem apoiar projetos esportivos aprovados e deduzir o
+                valor do Imposto de Renda (até 7% para pessoa física e até 2% para empresas no lucro
+                real). O {appConfig.name} conecta esses projetos incentivados a quem quer patrocinar —
+                da descoberta à gestão da parceria.
+              </p>
+              <Button asChild className="mt-6">
+                <Link href="/lei-de-incentivo">
+                  Entenda a Lei de Incentivo <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ATLETAS EM DESTAQUE (com fotos) */}
       <section className="container py-16 md:py-24">

@@ -45,6 +45,7 @@ export const FOOTER_NAV: { heading: string; links: { title: string; href: string
     heading: 'Plataforma',
     links: [
       { title: 'Como funciona', href: '/como-funciona' },
+      { title: 'Lei de Incentivo ao Esporte', href: '/lei-de-incentivo' },
       { title: 'Explorar atletas', href: '/explorar/atletas' },
       { title: 'Explorar projetos', href: '/explorar/projetos' },
       { title: 'Explorar oportunidades', href: '/explorar/oportunidades' },
